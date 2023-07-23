@@ -17,7 +17,7 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => res.status(400).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.updateUserProfile = (req, res) => {
@@ -28,14 +28,15 @@ module.exports.updateUserProfile = (req, res) => {
     { name: name, about: about },
   )
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка'}));
+    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
-    { avatar },
+    // eslint-disable-next-line object-shorthand
+    { avatar: avatar },
   )
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
