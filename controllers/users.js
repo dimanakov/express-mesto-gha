@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
 const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../constants/errors');
+const mongoose = require('mongoose');
 
 const User = require('../models/user');
 
@@ -37,6 +37,10 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       if (err instanceof mongoose.CastError) {
         res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
+        return;
+      }
+      if (err instanceof mongoose.ValidaionError) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Переданы некорректные данные.' });
         return;
       }
       res.status(ERROR_DEFAULT).send({ message: 'На сервере произошла ошибка.' });
