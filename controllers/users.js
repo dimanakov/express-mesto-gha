@@ -8,7 +8,7 @@ module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
-      if (err instanceof mongoose.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
         return;
       }
@@ -22,7 +22,7 @@ module.exports.getUser = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err instanceof mongoose.ValidationError) {
+      if (err instanceof mongoose.Error.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: ' Пользователь по указанному _id не найден.' });
         return;
       }
@@ -36,11 +36,11 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err instanceof mongoose.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
         return;
       }
-      // if (err instanceof mongoose.ValidaionError) {
+      // if (err instanceof mongoose.Error.ValidaionError) {
       //   res.status(ERROR_NOT_FOUND).send({ message: 'Переданы некорректные данные.' });
       //   return;
       // }
@@ -56,11 +56,11 @@ module.exports.updateUserProfile = (req, res) => {
   )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err instanceof mongoose.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
         return;
       }
-      if (err instanceof mongoose.ValidationError) {
+      if (err instanceof mongoose.Error.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден.' });
         return;
       }
@@ -76,11 +76,11 @@ module.exports.updateUserAvatar = (req, res) => {
   )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err instanceof mongoose.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
         return;
       }
-      if (err instanceof mongoose.ValidationError) {
+      if (err instanceof mongoose.Error.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден.' });
         return;
       }
