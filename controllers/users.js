@@ -1,5 +1,5 @@
-const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../constants/errors');
 const mongoose = require('mongoose');
+const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../constants/errors');
 
 const User = require('../models/user');
 
