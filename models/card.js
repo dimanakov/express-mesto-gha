@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Поле 'name' должно быть заполнено"],
-    minlength: [2, 'Переданы некорректные данные при обновлении профиля.'],
-    maxlength: [30, 'Переданы некорректные данные при обновлении профиля.'],
+    required: true,
+    minlength: [2, 'Переданы некорректные данные.'],
+    maxlength: [30, 'Переданы некорректные данные.'],
   },
   link: {
     type: String,

@@ -15,9 +15,8 @@ module.exports.addCard = (req, res) => {
 
   Card.create(
     { name, link, owner: req.user._id },
-    { runValidator: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
@@ -46,14 +45,15 @@ module.exports.removeCard = (req, res) => {
 };
 
 module.exports.setLike = (req, res) => {
+  const { cardId } = req.params;
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
     .then((card) => {
       if (!card) {
-        res.status(ERROR_NOT_FOUND).send({ message: ' Карточка не найдена.' });
+        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена.' });
         return;
       }
       res.send(card.likes);
@@ -75,7 +75,7 @@ module.exports.removeLike = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(ERROR_NOT_FOUND).send({ message: ' Карточка не найдена.' });
+        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена.' });
         return;
       }
       res.send(card.likes);
