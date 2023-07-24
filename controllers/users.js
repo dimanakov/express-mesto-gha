@@ -21,7 +21,11 @@ module.exports.getUserById = (req, res) => {
       }
       res.send({ data: user });
     })
-    .catch(() => {
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
+        return;
+      }
       res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
     });
 };
