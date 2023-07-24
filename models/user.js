@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
+    minlength: [2, 'Переданы некорректные данные при обновлении профиля.'],
+    maxlength: [30, 'Переданы некорректные данные при обновлении профиля.'],
     required: true,
-    minlength: 2,
-    maxlength: 30,
   },
   about: {
     type: String,
+    minlength: [2, 'Переданы некорректные данные при обновлении профиля.'],
+    maxlength: [30, 'Переданы некорректные данные при обновлении профиля.'],
     required: true,
-    minlength: 2,
-    maxlength: 30,
   },
   avatar: {
     type: String,
