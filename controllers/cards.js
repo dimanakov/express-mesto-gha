@@ -13,9 +13,18 @@ module.exports.getCards = (req, res) => {
 module.exports.addCard = (req, res) => {
   const { name, link } = req.body;
 
-  Card.create({ name, link, owner: req.user._id })
+  Card.create(
+    { name, link, owner: req.user._id },
+    { runValidator: true },
+  )
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' }));
+    .catch((err) => {
+      if (err instanceof mongoose.Error.ValidationError) {
+        res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
+        return;
+      }
+      res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
+    });
 };
 
 module.exports.removeCard = (req, res) => {
