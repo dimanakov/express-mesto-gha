@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_INTERNAL_SERVER } = require('../utils/errors');
 
@@ -99,4 +100,14 @@ module.exports.updateUserAvatar = (req, res) => {
       }
       res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
     });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      res.send({ token: jwt.sign({ _id: user._id }, 'soon-im-back', { expiresIn: '7d' }) });
+    })
+    .catch((err) => res.status(401).send({ message: err.message }));
 };
