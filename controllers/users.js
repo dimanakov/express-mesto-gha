@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_INTERNAL_SERVER } = require('../utils/errors');
 
@@ -31,10 +32,20 @@ module.exports.getUserById = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+  bcrypt.hash(req.body.password, 7)
+    .then((hash) => {
+      const { name, about, avatar, email } = req.body;
+      User.create({ name, about, avatar, email, password: hash }) // записываем хеш в базу
+    })
+    .then((user) => res.status(201).send({
+      data: {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      },
+    }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
