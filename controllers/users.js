@@ -17,8 +17,8 @@ function getUserProfile(req, res) {
     .then((user) => {
       res.send(user);
     })
-    .catch(err => res.send(err));
-};
+    .catch((err) => res.send(err));
+}
 
 module.exports.getUserById = (req, res) => {
   if (req.params.userId === 'me') {
