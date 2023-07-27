@@ -14,23 +14,25 @@ module.exports.createUser = (req, res) => {
       } = req.body;
       User.create({
         name, about, avatar, email, password: hash,
-      }); // записываем хеш в базу
-    })
-    .then((user) => res.status(201).send({
-      data: {
-        _id: user._id,
-        email: user.email,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-      },
-    }))
-    .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
-        res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
-        return;
-      }
-      res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
+      }) // записываем хеш в базу
+        .then((user) => {
+          res.status(201).send({
+            data: {
+              _id: user._id,
+              name: user.name,
+              about: user.about,
+              avatar: user.avatar,
+              email: user.email,
+            },
+          });
+        })
+        .catch((err) => {
+          if (err instanceof mongoose.Error.ValidationError) {
+            res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
+            return;
+          }
+          res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
+        });
     });
 };
 

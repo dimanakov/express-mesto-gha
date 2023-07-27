@@ -12,7 +12,19 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
+function getUserProfile(req, res) {
+  User.findById(req.user._id)
+    .then((user) => {
+      res.send(user);
+    })
+    .catch(err => res.send(err));
+};
+
 module.exports.getUserById = (req, res) => {
+  if (req.params.userId === 'me') {
+    getUserProfile(req, res);
+    return;
+  }
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {

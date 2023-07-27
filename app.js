@@ -9,21 +9,15 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+mongoose.connect(
+  'mongodb://127.0.0.1:27017/mestodb',
+);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64bcb6486b27800dce53b880',
-  };
-
-  next();
-});
-
-app.post('/signin', login);
 app.post('/signup', createUser);
+app.post('/signin', login);
 
 app.use(auth);
 
