@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_INTERNAL_SERVER } = require('../utils/errors');
+const { ERROR_CODE, ERROR_INTERNAL_SERVER } = require('../utils/errors');
 
 const User = require('../models/user');
 
@@ -13,7 +13,7 @@ module.exports.createUser = (req, res) => {
         name, about, avatar, email,
       } = req.body;
       User.create({
-        name, about, avatar, email, password: hash
+        name, about, avatar, email, password: hash,
       }); // записываем хеш в базу
     })
     .then((user) => res.status(201).send({
@@ -41,5 +41,7 @@ module.exports.login = (req, res) => {
     .then((user) => {
       res.send({ token: jwt.sign({ _id: user._id }, 'soon-im-back', { expiresIn: '7d' }) });
     })
-    .catch((err) => res.status(401).send({ message: err.message }));
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
 };
