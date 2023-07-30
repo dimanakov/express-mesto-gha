@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const BAD_REQUEST_400 = require('../errors/BAD_REQUEST_400');
+// const BAD_REQUEST_400 = require('../errors/BAD_REQUEST_400');
 const NOT_FOUND_404 = require('../errors/NOT_FOUND_404');
 
 // const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_INTERNAL_SERVER } = require('../utils/errors');
