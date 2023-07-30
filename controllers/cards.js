@@ -29,7 +29,7 @@ module.exports.removeCard = (req, res, next) => {
         next(new FOBIDDEN_403('Удаление чужих карточек невозможно'));
         return;
       }
-      Card.findByIdAndRemove(req.params.cardId)
+      Card.deleteOne(card)
         .then(() => {
           res.send({ message: 'Карточка удалена' });
         });
