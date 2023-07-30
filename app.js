@@ -1,9 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { ERROR_NOT_FOUND } = require('./utils/errors');
+const { errors } = require('celebrate');
+const { signRequestValidator } = require('./middlewares/signRequestValidator');
+const NOT_FOUND_404 = require('./errors/NOT_FOUND_404');
 const { login, createUser } = require('./controllers/auth');
 const auth = require('./middlewares/auth');
+const { errorHandler } = require('./middlewares/errorHandler');
 
 const { PORT = 3000 } = process.env;
 
@@ -16,17 +19,21 @@ mongoose.connect(
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post('/signup', createUser);
-app.post('/signin', login);
+app.post('/signup', signRequestValidator, createUser);
+app.post('/signin', signRequestValidator, login);
 
 app.use(auth);
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use('*', (req, res) => {
-  res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не найдена.' });
+app.use('*', (req, res, next) => { // обработчик несуществующих страниц
+  next(new NOT_FOUND_404('Запрашиваемая страница не найдена.'));
 });
+
+app.use(errors()); // обработчик ошибок celebrate
+
+app.use(errorHandler); // централизованный обработчик ошибок express
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

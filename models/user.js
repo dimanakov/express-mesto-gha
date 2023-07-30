@@ -1,46 +1,49 @@
 const mongoose = require('mongoose');
 const validator = require('validator'); //  валидатор для данных БД
 const bcrypt = require('bcryptjs');
+const UNAUTHORIZED_401 = require('../errors/UNAUTHORIZED_401');
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    minlength: [2, 'Переданы некорректные данные при обновлении профиля.'],
-    maxlength: [30, 'Переданы некорректные данные при обновлении профиля.'],
-    default: 'Жак-Ив Кусто',
-  },
-  about: {
-    type: String,
-    minlength: [2, 'Переданы некорректные данные при обновлении профиля.'],
-    maxlength: [30, 'Переданы некорректные данные при обновлении профиля.'],
-    default: 'Исследователь',
-  },
-  avatar: {
-    type: String,
-    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: {
-      validator: (v) => validator.isURL(v),
-      message: 'Неправильный формат ссылки',
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: 'String',
+      minLength: [2, 'Поле name должно быть не меньше 2 символов.'],
+      maxLength: [30, 'Поле name должно быть не больше 30 символов.'],
+      default: 'Жак-Ив Кусто',
+    },
+    about: {
+      type: 'String',
+      minLength: [2, 'Поле about должно быть не меньше 2 символов.'],
+      maxLength: [200, 'Поле about должно быть не больше 200 символов.'],
+      default: 'Исследователь',
+    },
+    avatar: {
+      type: 'String',
+      default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+      validate: {
+        validator: (v) => validator.isURL(v),
+        message: 'Неправильный формат ссылки',
+      },
+    },
+    email: {
+      type: 'String',
+      required: true,
+      unique: true,
+      validate: {
+        validator: (email) => validator.isEmail(email),
+        message: 'Неправильный формат почты',
+      },
+    },
+    password: {
+      type: 'String',
+      required: true,
+      minLength: [4, 'Пароль не может быть короче 4 символов.'],
+      select: false, // необходимо добавить поле select
     },
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: (v) => validator.isEmail(v),
-      message: 'Неправильный формат почты',
-    },
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 4,
-    select: false, // необходимо добавить поле select
-  },
-});
-
-// добавим метод findUserByCredentials схеме пользователя
+  { versionKey: false },
+);
+// добавим метод findUserByCredentials(собственный метод mongoose) схеме пользователя
 // у него будет два параметра — почта и пароль
 // eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password) {
@@ -48,13 +51,13 @@ userSchema.statics.findUserByCredentials = function (email, password) {
     .then((user) => {
       // не нашёлся — отклоняем промис
       if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        return Promise.reject(new UNAUTHORIZED_401('Неправильные почта или пароль'));
       }
       // нашёлся — сравниваем хеши
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error('Неправильные почта или пароль'));
+            return Promise.reject(new UNAUTHORIZED_401('Неправильные почта или пароль'));
           }
 
           return user;
