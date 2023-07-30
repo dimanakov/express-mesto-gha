@@ -3,8 +3,6 @@ const jwt = require('jsonwebtoken');
 const CONFLICT_409 = require('../errors/CONFLICT_409');
 const User = require('../models/user');
 
-// const { ERROR_CODE, ERROR_INTERNAL_SERVER, ERROR_NOT_FOUND } = require('../utils/errors');
-
 module.exports.createUser = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {

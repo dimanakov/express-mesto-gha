@@ -1,8 +1,5 @@
-// const BAD_REQUEST_400 = require('../errors/BAD_REQUEST_400');
+const FOBIDDEN_403 = require('../errors/FORBIDDEN_403');
 const NOT_FOUND_404 = require('../errors/NOT_FOUND_404');
-
-// const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_INTERNAL_SERVER } = require('../utils/errors');
-
 const Card = require('../models/card');
 
 module.exports.getCards = (req, res, next) => {
@@ -19,34 +16,25 @@ module.exports.addCard = (req, res, next) => {
   )
     .then((card) => res.status(201).send({ data: card }))
     .catch(next);
-  // .catch((err) => {
-  //   if (err instanceof mongoose.Error.ValidationError) {
-  //     next(new BAD_REQUEST_400('Переданы некорректные данные.'));
-  //     // res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
-  //     return;
-  //   }
-  //   res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
-  // });
 };
 
 module.exports.removeCard = (req, res, next) => {
-  Card.findByIdAndDelete(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         next(new NOT_FOUND_404('Карточка не найдена.'));
-        // res.status(ERROR_NOT_FOUND).send({ message: ' Карточка не найдена.' });
         return;
       }
-      res.send(card);
+      if (card.owner !== req.user._id) {
+        next(new FOBIDDEN_403('Удаление чужих карточек невозможно'));
+        return;
+      }
+      Card.findByIdAndRemove(req.params.cardId)
+        .then(() => {
+          res.send({ message: 'Карточка удалена' });
+        });
     })
     .catch(next);
-  // .catch((err) => {
-  //   if (err instanceof mongoose.Error.CastError) {
-  //     res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
-  //     return;
-  //   }
-  //   res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
-  // });
 };
 
 module.exports.setLike = (req, res, next) => {
@@ -58,20 +46,12 @@ module.exports.setLike = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        // res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена.' });
         next(new NOT_FOUND_404('Карточка не найдена.'));
         return;
       }
       res.send(card.likes);
     })
     .catch(next);
-  // .catch((err) => {
-  //   if (err instanceof mongoose.Error.CastError) {
-  //     res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
-  //     return;
-  //   }
-  //   res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
-  // });
 };
 
 module.exports.removeLike = (req, res, next) => {
@@ -82,18 +62,10 @@ module.exports.removeLike = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        // res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена.' });
         next(new NOT_FOUND_404('Карточка не найдена.'));
         return;
       }
       res.send(card.likes);
     })
     .catch(next);
-  // .catch((err) => {
-  //   if (err instanceof mongoose.Error.CastError) {
-  //     res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные.' });
-  //     return;
-  //   }
-  //   res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
-  // });
 };

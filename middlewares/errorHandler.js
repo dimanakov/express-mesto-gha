@@ -13,7 +13,6 @@ module.exports.errorHandler = (err, req, res, next) => {
     res.status(badRequest.statusCode).send({ message: badRequest.message });
     return;
   }
-  // console.log(err);
   const { statusCode = 500, message } = err;
   res
     .status(statusCode)

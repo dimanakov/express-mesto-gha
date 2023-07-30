@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
-const { signRequestValidator } = require('./middlewares/signRequestValidator');
+const { signValidator } = require('./middlewares/requestValidator');
 const NOT_FOUND_404 = require('./errors/NOT_FOUND_404');
 const { login, createUser } = require('./controllers/auth');
 const auth = require('./middlewares/auth');
@@ -19,8 +19,8 @@ mongoose.connect(
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post('/signup', signRequestValidator, createUser);
-app.post('/signin', signRequestValidator, login);
+app.post('/signup', signValidator, createUser);
+app.post('/signin', signValidator, login);
 
 app.use(auth);
 

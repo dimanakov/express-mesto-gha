@@ -1,7 +1,4 @@
-// const mongoose = require('mongoose');
 const NOT_FOUND_404 = require('../errors/NOT_FOUND_404');
-
-// const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_INTERNAL_SERVER } = require('../utils/errors');
 
 const User = require('../models/user');
 
@@ -46,14 +43,6 @@ module.exports.updateUserProfile = (req, res, next) => {
       res.send({ data: user });
     })
     .catch(next);
-  // .catch((err) => {
-  //   if (err instanceof mongoose.Error.ValidationError) {
-  // eslint-disable-next-line max-len
-  // res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-  //     return;
-  //   }
-  //   res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
-  // });
 };
 
 module.exports.updateUserAvatar = (req, res, next) => {
@@ -65,20 +54,10 @@ module.exports.updateUserAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        // eslint-disable-next-line max-len
-        // res.status(ERROR_NOT_FOUND).send({ message: ' Пользователь по указанному _id не найден.' });
         next(new NOT_FOUND_404(' Пользователь по указанному _id не найден.'));
         return;
       }
       res.send({ data: user });
     })
     .catch(next);
-  // .catch((err) => {
-  //   if (err instanceof mongoose.Error.ValidationError) {
-  // eslint-disable-next-line max-len
-  //     res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-  //     return;
-  //   }
-  //   res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка.' });
-  // });
 };
