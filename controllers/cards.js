@@ -25,7 +25,7 @@ module.exports.removeCard = (req, res, next) => {
         next(new NOT_FOUND_404('Карточка не найдена.'));
         return;
       }
-      if (card.owner !== req.user._id) {
+      if (card.owner.toString() !== req.user._id) {
         next(new FOBIDDEN_403('Удаление чужих карточек невозможно'));
         return;
       }
