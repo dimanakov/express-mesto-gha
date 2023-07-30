@@ -7,13 +7,13 @@ module.exports.signValidator = celebrate({
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(regexpURL),
     email: Joi.string().required().max(63).email(),
-    password: Joi.string().required().min(4).max(63),
+    password: Joi.string().required(),
   }).unknown(true),
 });
 
 module.exports.userIdValidator = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+    userId: Joi.string().length(24).hex().required(),
   }),
 });
 
@@ -39,6 +39,6 @@ module.exports.addCardValidator = celebrate({
 
 module.exports.cardIdValidator = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().length(24).hex().required(),
   }),
 });

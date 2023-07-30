@@ -1,5 +1,6 @@
+const mongoose = require('mongoose');
 const NOT_FOUND_404 = require('../errors/NOT_FOUND_404');
-
+const BAD_REQUEST_400 = require('../errors/BAD_REQUEST_400');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res, next) => {
@@ -25,7 +26,13 @@ module.exports.getUserById = (req, res, next) => {
       }
       res.send({ data: user });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        next(new BAD_REQUEST_400('Переданы некорректные данные.'));
+        return;
+      }
+      next(err);
+    });
 };
 
 module.exports.updateUserProfile = (req, res, next) => {
@@ -42,7 +49,13 @@ module.exports.updateUserProfile = (req, res, next) => {
       }
       res.send({ data: user });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err instanceof mongoose.Error.ValidationError) {
+        next(new BAD_REQUEST_400('Переданы некорректные данные при обновлении профиля.'));
+        return;
+      }
+      next(err);
+    });
 };
 
 module.exports.updateUserAvatar = (req, res, next) => {
@@ -59,5 +72,11 @@ module.exports.updateUserAvatar = (req, res, next) => {
       }
       res.send({ data: user });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err instanceof mongoose.Error.ValidationError) {
+        next(new BAD_REQUEST_400('Переданы некорректные данные при обновлении профиля.'));
+        return;
+      }
+      next(err);
+    });
 };
